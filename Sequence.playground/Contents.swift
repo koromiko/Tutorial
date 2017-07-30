@@ -101,7 +101,6 @@ while let aBeer = aBeerContainer.next() {
     print(aBeer)
 }
 
-
 let aMachine = VendorMachine(elements: [ aOrionBeer, aSaporoBeer, aTaiwanBeer, aAsahiBeer ])
 for beer in aMachine {
     print(beer)

@@ -1,0 +1,6 @@
+framework module Pods_MVVMPlaygroundTests {
+  umbrella header "Pods-MVVMPlaygroundTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

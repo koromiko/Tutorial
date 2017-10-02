@@ -89,10 +89,15 @@ class PersistentTodoListTests: XCTestCase {
         _ = sut.insertTodoItem(name: name, finished: finished)
         
         //When save
-        sut.save()
+        
         
         //Assert save is called via notification (wait)
-        waitForExpectations(timeout: 1, handler: nil)
+        expectation(forNotification: Notification.Name.NSManagedObjectContextDidSave.rawValue, object: nil, handler: nil)
+        
+        sut.save()
+        
+        waitForExpectations(timeout: 1.0, handler: nil)
+        
         
     }
     
@@ -140,6 +145,7 @@ class PersistentTodoListTests: XCTestCase {
     }
     
     func contextSaved( notification: Notification ) {
+        print("\(notification)")
         saveNotificationCompleteHandler?(notification)
     }
 }

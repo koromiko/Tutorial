@@ -17,4 +17,5 @@ struct Photo: Codable {
     let description: String?
     let created_at: Date
     let image_url: String
+    let camera: String?
 }

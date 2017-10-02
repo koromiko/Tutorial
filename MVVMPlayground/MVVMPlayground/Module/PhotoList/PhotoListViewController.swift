@@ -12,18 +12,43 @@ import SDWebImage
 class PhotoListViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var photos: [Photo] = [Photo]()
+    
+    var selectedIndexPath: IndexPath?
+    
+    lazy var apiService: APIService = {
+        return APIService()
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        initView()
+        
+        initData()
+        
+    }
+    
+    func initView() {
+        self.navigationItem.title = "Popular"
+        
         tableView.estimatedRowHeight = 150
         tableView.rowHeight = UITableViewAutomaticDimension
-        
-        APIService().fetchPopularPhoto { (success, photos, error) in
+    }
+    
+    func initData() {
+        apiService.fetchPopularPhoto { (success, photos, error) in
             DispatchQueue.main.async {
+                
                 self.photos = photos
+                
+                self.activityIndicator.stopAnimating()
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.tableView.alpha = 1.0
+                })
+                
                 self.tableView.reloadData()
             }
         }
@@ -46,9 +71,18 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
         let photo = self.photos[indexPath.row]
         //Text
         cell.nameLabel.text = photo.name
-        cell.descriptionLabel.text = photo.description
         
-        //Date
+        //Wrap a description
+        var descText: [String] = [String]()
+        if let camera = photo.camera {
+            descText.append(camera)
+        }
+        if let description = photo.description {
+            descText.append( description )
+        }
+        cell.descriptionLabel.text = descText.joined(separator: " - ")
+        
+        //Wrap the date
         let dateFormateer = DateFormatter()
         dateFormateer.dateFormat = "yyyy-MM-dd"
         cell.dateLabel.text = dateFormateer.string(from: photo.created_at)
@@ -71,10 +105,21 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
         return 150.0
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        self.selectedIndexPath = indexPath
+        return indexPath
     }
     
+}
+
+extension PhotoListViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? PhotoDetailViewController,
+            let indexPath = self.selectedIndexPath {
+            let photo = self.photos[indexPath.row]
+            vc.imageUrl = photo.image_url
+        }
+    }
 }
 
 class PhotoListTableViewCell: UITableViewCell {

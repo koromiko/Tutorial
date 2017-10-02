@@ -18,6 +18,7 @@
 		B5296F321F809F4D003CDD90 /* PhotoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5296F311F809F4D003CDD90 /* PhotoListViewController.swift */; };
 		B5296F361F812CD9003CDD90 /* content.json in Resources */ = {isa = PBXBuildFile; fileRef = B5296F351F812CD9003CDD90 /* content.json */; };
 		B5296F381F813552003CDD90 /* APIServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5296F371F813552003CDD90 /* APIServiceTests.swift */; };
+		B5296F3C1F82A39C003CDD90 /* PhotoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5296F3B1F82A39C003CDD90 /* PhotoDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		B5296F311F809F4D003CDD90 /* PhotoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListViewController.swift; sourceTree = "<group>"; };
 		B5296F351F812CD9003CDD90 /* content.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = content.json; sourceTree = "<group>"; };
 		B5296F371F813552003CDD90 /* APIServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIServiceTests.swift; sourceTree = "<group>"; };
+		B5296F3B1F82A39C003CDD90 /* PhotoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewController.swift; sourceTree = "<group>"; };
 		EF7905D927CB936C846D88A6 /* Pods_MVVMPlaygroundTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MVVMPlaygroundTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -128,6 +130,7 @@
 		B5296F291F809BC8003CDD90 /* Module */ = {
 			isa = PBXGroup;
 			children = (
+				B5296F3A1F82A383003CDD90 /* PhotoDetail */,
 				B5296F2B1F809E9E003CDD90 /* PhotoList */,
 			);
 			path = Module;
@@ -156,6 +159,14 @@
 				B5296F351F812CD9003CDD90 /* content.json */,
 			);
 			path = Service;
+			sourceTree = "<group>";
+		};
+		B5296F3A1F82A383003CDD90 /* PhotoDetail */ = {
+			isa = PBXGroup;
+			children = (
+				B5296F3B1F82A39C003CDD90 /* PhotoDetailViewController.swift */,
+			);
+			path = PhotoDetail;
 			sourceTree = "<group>";
 		};
 		C2DFBDCC67CC885C0387E711 /* Pods */ = {
@@ -384,6 +395,7 @@
 				B5296F321F809F4D003CDD90 /* PhotoListViewController.swift in Sources */,
 				B5296F2D1F809EF2003CDD90 /* photo.swift in Sources */,
 				B5296F301F809F0E003CDD90 /* APIService.swift in Sources */,
+				B5296F3C1F82A39C003CDD90 /* PhotoDetailViewController.swift in Sources */,
 				B5296F0A1F809ADF003CDD90 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

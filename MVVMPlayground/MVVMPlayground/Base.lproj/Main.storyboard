@@ -33,7 +33,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="2Cf-Ys-cGK">
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ep7-5U-yTo">
+                                <rect key="frame" x="177" y="323" width="20" height="20"/>
+                            </activityIndicatorView>
+                            <tableView clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="2Cf-Ys-cGK">
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -127,13 +130,16 @@
                         <constraints>
                             <constraint firstItem="2Cf-Ys-cGK" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="G9R-R1-FJB"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="2Cf-Ys-cGK" secondAttribute="bottom" id="c5h-N8-rd6"/>
+                            <constraint firstItem="ep7-5U-yTo" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="kV8-MQ-X6V"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="2Cf-Ys-cGK" secondAttribute="trailing" id="kf8-0f-9Lb"/>
                             <constraint firstItem="2Cf-Ys-cGK" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="vCo-vj-8hV"/>
+                            <constraint firstItem="ep7-5U-yTo" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="vbl-4p-G9k"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="BdX-zA-tfm"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="ep7-5U-yTo" id="NEv-0F-LQx"/>
                         <outlet property="tableView" destination="2Cf-Ys-cGK" id="7gB-b3-3cx"/>
                     </connections>
                 </viewController>
@@ -141,25 +147,30 @@
             </objects>
             <point key="canvasLocation" x="52" y="62.518740629685162"/>
         </scene>
-        <!--View Controller-->
+        <!--Photo Detail View Controller-->
         <scene sceneID="vPg-aq-Xlq">
             <objects>
-                <viewController id="kQt-Sz-GFs" sceneMemberID="viewController">
+                <viewController id="kQt-Sz-GFs" customClass="PhotoDetailViewController" customModule="MVVMPlayground" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hcl-P5-VaA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rRD-1x-G5h">
-                                <rect key="frame" x="165" y="323" width="44" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BdO-pc-OIA">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="BdO-pc-OIA" firstAttribute="leading" secondItem="nVE-Kg-s50" secondAttribute="leading" id="XgJ-sG-0eM"/>
+                            <constraint firstItem="BdO-pc-OIA" firstAttribute="top" secondItem="nVE-Kg-s50" secondAttribute="top" id="aVM-aY-OLw"/>
+                            <constraint firstItem="nVE-Kg-s50" firstAttribute="trailing" secondItem="BdO-pc-OIA" secondAttribute="trailing" id="bKU-FE-pKe"/>
+                            <constraint firstItem="nVE-Kg-s50" firstAttribute="bottom" secondItem="BdO-pc-OIA" secondAttribute="bottom" id="tUl-XT-sOR"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="nVE-Kg-s50"/>
                     </view>
+                    <connections>
+                        <outlet property="imageView" destination="BdO-pc-OIA" id="ABJ-C9-ghl"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="chv-lW-Nak" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -25,8 +25,10 @@ class PhotoListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Init the static view
         initView()
         
+        // Fetch data from server
         initData()
         
     }
@@ -39,17 +41,16 @@ class PhotoListViewController: UIViewController {
     }
     
     func initData() {
-        apiService.fetchPopularPhoto { (success, photos, error) in
+        apiService.fetchPopularPhoto { [weak self] (success, photos, error) in
             DispatchQueue.main.async {
+                self?.photos = photos
                 
-                self.photos = photos
-                
-                self.activityIndicator.stopAnimating()
+                self?.activityIndicator.stopAnimating()
                 UIView.animate(withDuration: 0.2, animations: {
-                    self.tableView.alpha = 1.0
+                    self?.tableView.alpha = 1.0
                 })
-                
-                self.tableView.reloadData()
+
+                self?.tableView.reloadData()
             }
         }
     }

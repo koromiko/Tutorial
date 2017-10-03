@@ -109,7 +109,7 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
         self.selectedIndexPath = indexPath
         return indexPath
     }
-    
+
 }
 
 extension PhotoListViewController {

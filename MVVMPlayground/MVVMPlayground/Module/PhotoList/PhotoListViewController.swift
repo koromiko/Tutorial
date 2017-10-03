@@ -107,8 +107,18 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        self.selectedIndexPath = indexPath
-        return indexPath
+        
+        let photo = self.photos[indexPath.row]
+        if photo.for_sale {
+            self.selectedIndexPath = indexPath
+            return indexPath
+        }else {
+            let alert = UIAlertController(title: "Not for sale", message: "This item is not for sale", preferredStyle: .alert)
+            alert.addAction( UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            
+            return nil
+        }
     }
 
 }

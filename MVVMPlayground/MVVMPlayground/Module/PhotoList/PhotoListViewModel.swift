@@ -12,12 +12,12 @@ class PhotoListViewModel {
     
     let apiService: APIServiceProtocol
 
-    var photos: [Photo] = [Photo]()
+    private var photos: [Photo] = [Photo]()
     
-    var cellViewMdoels: [PhotoListCellViewModel] = [PhotoListCellViewModel]()
+    private var cellViewModels: [PhotoListCellViewModel] = [PhotoListCellViewModel]()
     
     var numberOfCells: Int {
-        return cellViewMdoels.count
+        return cellViewModels.count
     }
     
     var isAllowSegue: Bool = false
@@ -44,7 +44,7 @@ class PhotoListViewModel {
     }
     
     func getCellViewModel( at indexPath: IndexPath ) -> PhotoListCellViewModel {
-        return cellViewMdoels[indexPath.row]
+        return cellViewModels[indexPath.row]
     }
     
     func createCellViewModel( photo: Photo ) -> PhotoListCellViewModel {
@@ -73,7 +73,7 @@ class PhotoListViewModel {
         for photo in photos {
             vms.append( createCellViewModel(photo: photo) )
         }
-        self.cellViewMdoels = vms
+        self.cellViewModels = vms
     }
     
 }

@@ -121,7 +121,7 @@ class PhotoListViewModelTests: XCTestCase {
         
         //Given a sut with fetched photos
         let indexPath = IndexPath(row: 0, section: 0)
-        sut?.photos = PhotoStub().stubPhotos()
+        sutFinishedFetchPhotos()
 
         //When
         sut!.userPressed( at: indexPath )
@@ -136,7 +136,8 @@ class PhotoListViewModelTests: XCTestCase {
         
         //Given a sut with fetched photos
         let indexPath = IndexPath(row: 4, section: 0)
-        sut!.photos = PhotoStub().stubPhotos()
+        sutFinishedFetchPhotos()
+        
         let expect = XCTestExpectation(description: "Alert message is shown")
         sut!.showAlertClosure = { message in
             expect.fulfill()
@@ -156,12 +157,10 @@ class PhotoListViewModelTests: XCTestCase {
     func test_get_cell_view_model() {
         
         //Given a sut with fetched photos
-        mockAPIService?.completePhotos = PhotoStub().stubPhotos()
-        sut!.viewIsReady()
-        mockAPIService?.fetchSuccess()
+        sutFinishedFetchPhotos()
         
         let indexPath = IndexPath(row: 1, section: 0)
-        let testPhoto = sut!.photos[indexPath.row]
+        let testPhoto = mockAPIService!.completePhotos![indexPath.row]
         
         // When
         let vm = sut!.getCellViewModel(at: indexPath)
@@ -169,6 +168,12 @@ class PhotoListViewModelTests: XCTestCase {
         //Assert
         XCTAssertEqual( vm.titleText, testPhoto.name)
         
+    }
+    
+    private func sutFinishedFetchPhotos() {
+        mockAPIService!.completePhotos = PhotoStub().stubPhotos()
+        sut!.viewIsReady()
+        mockAPIService!.fetchSuccess()
     }
     
 }

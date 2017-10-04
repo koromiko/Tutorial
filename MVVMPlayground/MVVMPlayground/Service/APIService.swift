@@ -8,11 +8,15 @@
 
 import Foundation
 
-class APIService {
+protocol APIServiceProtocol {
+    func fetchPopularPhoto( complete: @escaping ( _ success: Bool, _ photos: [Photo], _ error: Error? )->() )
+}
+
+class APIService: APIServiceProtocol {
     // Simulate a long waiting for fetching 
     func fetchPopularPhoto( complete: @escaping ( _ success: Bool, _ photos: [Photo], _ error: Error? )->() ) {
         DispatchQueue.global().async {
-
+            sleep(3)
             let path = Bundle.main.path(forResource: "content", ofType: "json")!
             let data = try! Data(contentsOf: URL(fileURLWithPath: path))
             let decoder = JSONDecoder()

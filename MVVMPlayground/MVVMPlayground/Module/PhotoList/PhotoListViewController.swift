@@ -14,12 +14,8 @@ class PhotoListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    var photos: [Photo] = [Photo]()
-    
-    var selectedIndexPath: IndexPath?
-    
-    lazy var apiService: APIService = {
-        return APIService()
+    lazy var viewModel: PhotoListViewModel = {
+        return PhotoListViewModel(apiService: APIService())
     }()
     
     override func viewDidLoad() {
@@ -28,8 +24,8 @@ class PhotoListViewController: UIViewController {
         // Init the static view
         initView()
         
-        // Fetch data from server
-        initData()
+        // init view model
+        initVM()
         
     }
     
@@ -40,24 +36,45 @@ class PhotoListViewController: UIViewController {
         tableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    func initData() {
-        apiService.fetchPopularPhoto { [weak self] (success, photos, error) in
+    func initVM() {
+        
+        // Naive binding
+        viewModel.showAlertClosure = { [weak self] message in
             DispatchQueue.main.async {
-                self?.photos = photos
-                
-                self?.activityIndicator.stopAnimating()
-                UIView.animate(withDuration: 0.2, animations: {
+                self?.showAlert( message )
+            }
+        }
+        
+        viewModel.updateLoadingStatus = { [weak self] isLoading in
+            DispatchQueue.main.async {
+                if isLoading {
+                    self?.activityIndicator.startAnimating()
+                    self?.tableView.alpha = 0.0
+                }else {
+                    self?.activityIndicator.stopAnimating()
                     self?.tableView.alpha = 1.0
-                })
-
+                }
+            }
+        }
+        
+        viewModel.reloadTableViewClosure = { [weak self] () in
+            DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
         }
-    }
+        
+        viewModel.viewIsReady()
 
+    }
+    
+    func showAlert( _ message: String ) {
+        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
+        alert.addAction( UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        
     }
 
 }
@@ -69,27 +86,12 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
             fatalError("Cell not exists in storyboard")
         }
         
-        let photo = self.photos[indexPath.row]
-        //Text
-        cell.nameLabel.text = photo.name
+        let cellVM = viewModel.getCellViewModel( at: indexPath )
         
-        //Wrap a description
-        var descText: [String] = [String]()
-        if let camera = photo.camera {
-            descText.append(camera)
-        }
-        if let description = photo.description {
-            descText.append( description )
-        }
-        cell.descriptionLabel.text = descText.joined(separator: " - ")
-        
-        //Wrap the date
-        let dateFormateer = DateFormatter()
-        dateFormateer.dateFormat = "yyyy-MM-dd"
-        cell.dateLabel.text = dateFormateer.string(from: photo.created_at)
-
-        //Image
-        cell.mainImageView.sd_setImage(with: URL(string: photo.image_url), completed: nil)
+        cell.nameLabel.text = cellVM.titleText
+        cell.descriptionLabel.text = cellVM.descText
+        cell.mainImageView?.sd_setImage(with: URL( string: cellVM.imageUrl ), completed: nil)
+        cell.dateLabel.text = cellVM.dateText
         
         return cell
     }
@@ -99,7 +101,7 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.photos.count
+        return viewModel.numberOfCells
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -108,15 +110,10 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         
-        let photo = self.photos[indexPath.row]
-        if photo.for_sale {
-            self.selectedIndexPath = indexPath
+        self.viewModel.userPressed(at: indexPath)
+        if viewModel.isAllowSegue {
             return indexPath
         }else {
-            let alert = UIAlertController(title: "Not for sale", message: "This item is not for sale", preferredStyle: .alert)
-            alert.addAction( UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            
             return nil
         }
     }
@@ -126,8 +123,7 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
 extension PhotoListViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? PhotoDetailViewController,
-            let indexPath = self.selectedIndexPath {
-            let photo = self.photos[indexPath.row]
+            let photo = viewModel.selectedPhoto {
             vc.imageUrl = photo.image_url
         }
     }

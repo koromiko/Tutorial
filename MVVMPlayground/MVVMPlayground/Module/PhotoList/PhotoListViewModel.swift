@@ -14,7 +14,23 @@ class PhotoListViewModel {
 
     private var photos: [Photo] = [Photo]()
     
-    private var cellViewModels: [PhotoListCellViewModel] = [PhotoListCellViewModel]()
+    private var cellViewModels: [PhotoListCellViewModel] = [PhotoListCellViewModel]() {
+        didSet {
+            self.reloadTableViewClosure?()
+        }
+    }
+
+    var isLoading: Bool = false {
+        didSet {
+            self.updateLoadingStatus?()
+        }
+    }
+    
+    var alertMessage: String? {
+        didSet {
+            self.showAlertClosure?()
+        }
+    }
     
     var numberOfCells: Int {
         return cellViewModels.count
@@ -25,21 +41,19 @@ class PhotoListViewModel {
     var selectedPhoto: Photo?
 
     var reloadTableViewClosure: (()->())?
-    var showAlertClosure: (( _ message: String )->())?
-    var updateLoadingStatus: ((Bool)->())?
+    var showAlertClosure: (()->())?
+    var updateLoadingStatus: (()->())?
     
     init( apiService: APIServiceProtocol ) {
         self.apiService = apiService
+        initFetch()
     }
     
-    func viewIsReady() {
-        
-        self.updateLoadingStatus?( true )
+    func initFetch() {
+        self.isLoading = true
         apiService.fetchPopularPhoto { [weak self] (success, photos, error) in
-            self?.photos = photos
-            self?.updateCellViewModel()
-            self?.updateLoadingStatus?(false)
-            self?.reloadTableViewClosure?()
+            self?.processFetchedPhoto(photos: photos)
+            self?.isLoading = false
         }
     }
     
@@ -68,7 +82,8 @@ class PhotoListViewModel {
                                        dateText: dateFormatter.string(from: photo.created_at) )
     }
     
-    private func updateCellViewModel() {
+    private func processFetchedPhoto( photos: [Photo] ) {
+        self.photos = photos // Cache
         var vms = [PhotoListCellViewModel]()
         for photo in photos {
             vms.append( createCellViewModel(photo: photo) )
@@ -87,7 +102,7 @@ extension PhotoListViewModel {
         }else {
             self.isAllowSegue = false
             self.selectedPhoto = nil
-            self.showAlertClosure?( "This item is not for sale")
+            self.alertMessage = "This item is not for sale"
         }
         
     }

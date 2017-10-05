@@ -33,7 +33,7 @@ class PhotoListViewModelTests: XCTestCase {
         mockAPIService!.completePhotos = [Photo]()
 
         // When
-        sut.viewIsReady()
+        sut.initFetch()
     
         // Assert
         XCTAssert(mockAPIService!.isFetchPopularPhotoCalled)
@@ -50,7 +50,7 @@ class PhotoListViewModelTests: XCTestCase {
         }
         
         // When
-        sut.viewIsReady()
+        sut.initFetch()
         mockAPIService!.fetchSuccess()
         
         // Number of cell view model is equal to the number of photos
@@ -99,13 +99,13 @@ class PhotoListViewModelTests: XCTestCase {
         guard let sut = self.sut else { fatalError("Sut is not ready") }
         var loadingStatus = false
         let expect = XCTestExpectation(description: "Loading status updated")
-        sut.updateLoadingStatus = { isLoading in
-            loadingStatus = isLoading
+        sut.updateLoadingStatus = { [weak sut] in
+            loadingStatus = sut!.isLoading
             expect.fulfill()
         }
         
         //when fetching
-        sut.viewIsReady()
+        sut.initFetch()
         
         // Assert
         XCTAssertTrue( loadingStatus )
@@ -139,9 +139,9 @@ class PhotoListViewModelTests: XCTestCase {
         sutFinishedFetchPhotos()
         
         let expect = XCTestExpectation(description: "Alert message is shown")
-        sut!.showAlertClosure = { message in
+        sut!.showAlertClosure = { [weak sut] in
             expect.fulfill()
-            XCTAssertEqual(message, "This item is not for sale")
+            XCTAssertEqual(sut!.alertMessage, "This item is not for sale")
         }
         
         //When
@@ -172,7 +172,7 @@ class PhotoListViewModelTests: XCTestCase {
     
     private func sutFinishedFetchPhotos() {
         mockAPIService!.completePhotos = PhotoStub().stubPhotos()
-        sut!.viewIsReady()
+        sut!.initFetch()
         mockAPIService!.fetchSuccess()
     }
     

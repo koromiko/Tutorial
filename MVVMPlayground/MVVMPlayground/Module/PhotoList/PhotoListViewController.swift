@@ -39,20 +39,27 @@ class PhotoListViewController: UIViewController {
     func initVM() {
         
         // Naive binding
-        viewModel.showAlertClosure = { [weak self] message in
+        viewModel.showAlertClosure = { [weak self] () in
             DispatchQueue.main.async {
-                self?.showAlert( message )
+                if let message = self?.viewModel.alertMessage {
+                    self?.showAlert( message )
+                }
             }
         }
         
-        viewModel.updateLoadingStatus = { [weak self] isLoading in
+        viewModel.updateLoadingStatus = { [weak self] () in
             DispatchQueue.main.async {
+                let isLoading = self?.viewModel.isLoading ?? false
                 if isLoading {
                     self?.activityIndicator.startAnimating()
-                    self?.tableView.alpha = 0.0
+                    UIView.animate(withDuration: 0.2, animations: {
+                        self?.tableView.alpha = 0.0
+                    })
                 }else {
                     self?.activityIndicator.stopAnimating()
-                    self?.tableView.alpha = 1.0
+                    UIView.animate(withDuration: 0.2, animations: {
+                        self?.tableView.alpha = 1.0
+                    })
                 }
             }
         }
@@ -62,8 +69,6 @@ class PhotoListViewController: UIViewController {
                 self?.tableView.reloadData()
             }
         }
-        
-        viewModel.viewIsReady()
 
     }
     

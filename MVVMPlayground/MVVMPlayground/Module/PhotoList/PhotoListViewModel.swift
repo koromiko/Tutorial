@@ -43,10 +43,9 @@ class PhotoListViewModel {
     var reloadTableViewClosure: (()->())?
     var showAlertClosure: (()->())?
     var updateLoadingStatus: (()->())?
-    
-    init( apiService: APIServiceProtocol ) {
+
+    init( apiService: APIServiceProtocol = APIService()) {
         self.apiService = apiService
-        initFetch()
     }
     
     func initFetch() {
@@ -111,7 +110,6 @@ extension PhotoListViewModel {
         
     }
 }
-
 
 struct PhotoListCellViewModel {
     let titleText: String

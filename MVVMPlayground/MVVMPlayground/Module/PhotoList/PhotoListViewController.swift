@@ -15,7 +15,7 @@ class PhotoListViewController: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     lazy var viewModel: PhotoListViewModel = {
-        return PhotoListViewModel(apiService: APIService())
+        return PhotoListViewModel()
     }()
     
     override func viewDidLoad() {
@@ -69,6 +69,8 @@ class PhotoListViewController: UIViewController {
                 self?.tableView.reloadData()
             }
         }
+        
+        viewModel.initFetch()
 
     }
     

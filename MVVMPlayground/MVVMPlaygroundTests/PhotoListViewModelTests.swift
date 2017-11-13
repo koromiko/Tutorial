@@ -13,12 +13,11 @@ class PhotoListViewModelTests: XCTestCase {
     
     var sut: PhotoListViewModel!
     var mockAPIService: MockApiService!
-    
+
     override func setUp() {
         super.setUp()
         mockAPIService = MockApiService()
-        sut = PhotoListViewModel( apiService: mockAPIService )
-        
+        sut = PhotoListViewModel(apiService: mockAPIService)
     }
     
     override func tearDown() {
@@ -27,7 +26,7 @@ class PhotoListViewModelTests: XCTestCase {
         super.tearDown()
     }
     
-    func test_fetch_popular_photo_when_view_is_ready() {
+    func test_fetch_photo() {
         // Given
         mockAPIService.completePhotos = [Photo]()
 
@@ -38,10 +37,9 @@ class PhotoListViewModelTests: XCTestCase {
         XCTAssert(mockAPIService!.isFetchPopularPhotoCalled)
     }
     
-    func test_fetch_fail() {
+    func test_fetch_photo_fail() {
         
         // Given a failed fetch with a certain failure
-        mockAPIService.completePhotos = nil
         let error = APIError.permissionDenied
         
         // When
@@ -56,7 +54,7 @@ class PhotoListViewModelTests: XCTestCase {
     
     func test_create_cell_view_model() {
         // Given
-        let photos = PhotoStub().stubPhotos()
+        let photos = StubGenerator().stubPhotos()
         mockAPIService.completePhotos = photos
         let expect = XCTestExpectation(description: "reload closure triggered")
         sut.reloadTableViewClosure = { () in
@@ -102,7 +100,7 @@ class PhotoListViewModelTests: XCTestCase {
         
         //Given a sut with fetched photos
         let indexPath = IndexPath(row: 0, section: 0)
-        sutFinishedFetchPhotos()
+        goToFetchPhotoFinished()
 
         //When
         sut.userPressed( at: indexPath )
@@ -117,7 +115,7 @@ class PhotoListViewModelTests: XCTestCase {
         
         //Given a sut with fetched photos
         let indexPath = IndexPath(row: 4, section: 0)
-        sutFinishedFetchPhotos()
+        goToFetchPhotoFinished()
         
         let expect = XCTestExpectation(description: "Alert message is shown")
         sut.showAlertClosure = { [weak sut] in
@@ -138,10 +136,10 @@ class PhotoListViewModelTests: XCTestCase {
     func test_get_cell_view_model() {
         
         //Given a sut with fetched photos
-        sutFinishedFetchPhotos()
+        goToFetchPhotoFinished()
         
         let indexPath = IndexPath(row: 1, section: 0)
-        let testPhoto = mockAPIService.completePhotos![indexPath.row]
+        let testPhoto = mockAPIService.completePhotos[indexPath.row]
         
         // When
         let vm = sut.getCellViewModel(at: indexPath)
@@ -184,22 +182,21 @@ class PhotoListViewModelTests: XCTestCase {
 
 }
 
+//MARK: State control
 extension PhotoListViewModelTests {
-    private func sutFinishedFetchPhotos() {
-        mockAPIService.completePhotos = PhotoStub().stubPhotos()
+    private func goToFetchPhotoFinished() {
+        mockAPIService.completePhotos = StubGenerator().stubPhotos()
         sut.initFetch()
         mockAPIService.fetchSuccess()
     }
 }
 
-
-
 class MockApiService: APIServiceProtocol {
     
     var isFetchPopularPhotoCalled = false
     
-    var completePhotos: [Photo]?
-    var completeClosure: ((Bool, [Photo], APIError?) -> ())?
+    var completePhotos: [Photo] = [Photo]()
+    var completeClosure: ((Bool, [Photo], APIError?) -> ())!
     
     func fetchPopularPhoto(complete: @escaping (Bool, [Photo], APIError?) -> ()) {
         isFetchPopularPhotoCalled = true
@@ -208,16 +205,16 @@ class MockApiService: APIServiceProtocol {
     }
     
     func fetchSuccess() {
-        completeClosure!( true, completePhotos ?? [Photo](), nil )
+        completeClosure( true, completePhotos, nil )
     }
     
     func fetchFail(error: APIError?) {
-        completeClosure!( false, completePhotos ?? [Photo](), error )
+        completeClosure( false, completePhotos, error )
     }
     
 }
 
-class PhotoStub {
+class StubGenerator {
     func stubPhotos() -> [Photo] {
         let path = Bundle.main.path(forResource: "content", ofType: "json")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: path))

@@ -9,7 +9,7 @@ import Foundation
 protocol URLSessionProtocol {
     typealias DataTaskResult = (Data?, URLResponse?, Error?) -> Void
     
-    func dataTask(with request: NSURLRequest, completionHandler: @escaping DataTaskResult) -> URLSessionDataTaskProtocol
+    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskResult) -> URLSessionDataTaskProtocol
 }
 
 protocol URLSessionDataTaskProtocol {
@@ -29,7 +29,7 @@ class HttpClient {
     }
     
     func get( url: URL, callback: @escaping completeClosure ) {
-        let request = NSMutableURLRequest(url: url)
+        var request = URLRequest(url: url)
         request.httpMethod = "GET"
         let task = session.dataTask(with: request) { (data, response, error) in
             callback(data, error)
@@ -41,8 +41,8 @@ class HttpClient {
 
 //MARK: Conform the protocol
 extension URLSession: URLSessionProtocol {
-    func dataTask(with request: NSURLRequest, completionHandler: @escaping DataTaskResult) -> URLSessionDataTaskProtocol {
-        return dataTask(with: request, completionHandler: completionHandler) as URLSessionDataTaskProtocol
+    func dataTask(with request: URLRequest, completionHandler: @escaping URLSessionProtocol.DataTaskResult) -> URLSessionDataTaskProtocol {
+        return dataTask(with: request, completionHandler: completionHandler) as URLSessionDataTask
     }
 }
 
@@ -50,7 +50,6 @@ extension URLSessionDataTask: URLSessionDataTaskProtocol {}
 
 //MARK: MOCK
 class MockURLSession: URLSessionProtocol {
-    
 
     var nextDataTask = MockURLSessionDataTask()
     var nextData: Data?
@@ -58,11 +57,11 @@ class MockURLSession: URLSessionProtocol {
     
     private (set) var lastURL: URL?
     
-    func successHttpURLResponse(request: NSURLRequest) -> URLResponse {
+    func successHttpURLResponse(request: URLRequest) -> URLResponse {
         return HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)!
     }
     
-    func dataTask(with request: NSURLRequest, completionHandler: @escaping DataTaskResult) -> URLSessionDataTaskProtocol {
+    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskResult) -> URLSessionDataTaskProtocol {
         lastURL = request.url
         
         completionHandler(nextData, successHttpURLResponse(request: request), nextError)
@@ -139,6 +138,7 @@ class HttpClientTests: XCTestCase {
     
 }
 
-HttpClientTests.defaultTestSuite().run()
+HttpClientTests.defaultTestSuite.run()
+
 
 

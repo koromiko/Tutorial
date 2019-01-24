@@ -33,7 +33,7 @@ class PhotoListViewController: UIViewController {
         self.navigationItem.title = "Popular"
         
         tableView.estimatedRowHeight = 150
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
     }
     
     func initVM() {
@@ -94,11 +94,7 @@ extension PhotoListViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         let cellVM = viewModel.getCellViewModel( at: indexPath )
-        
-        cell.nameLabel.text = cellVM.titleText
-        cell.descriptionLabel.text = cellVM.descText
-        cell.mainImageView?.sd_setImage(with: URL( string: cellVM.imageUrl ), completed: nil)
-        cell.dateLabel.text = cellVM.dateText
+        cell.photoListCellViewModel = cellVM
         
         return cell
     }
@@ -142,5 +138,13 @@ class PhotoListTableViewCell: UITableViewCell {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var descContainerHeightConstraint: NSLayoutConstraint!
+    var photoListCellViewModel : PhotoListCellViewModel? {
+        didSet {
+            nameLabel.text = photoListCellViewModel?.titleText
+            descriptionLabel.text = photoListCellViewModel?.descText
+            mainImageView?.sd_setImage(with: URL( string: photoListCellViewModel?.imageUrl ?? "" ), completed: nil)
+            dateLabel.text = photoListCellViewModel?.dateText
+        }
+    }
 }
 
